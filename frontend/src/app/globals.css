@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Global Styles */
+:root {
+  --background: #ffffff; /* Default light background */
+  --foreground: #171717; /* Default dark text */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a; /* Dark background */
+    --foreground: #ededed; /* Light text */
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background); /* Use CSS variable */
+  font-family: Arial, Helvetica, sans-serif; /* Basic font stack */
+  overflow: hidden; /* Prevent body scroll */
+}
+
+/* Custom shadow for chatbox */
+.large-shadow {
+  /* This creates a glow effect */
+  box-shadow: 0 0 20px 10px #e2007e7e; /* Magenta glow, adjust opacity (7e) */
+}
+
+/* Blur effect for chatbox background */
+.blur-background {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+}
+
+/* Chat Bubble Styles */
+.chat-bubble {
+  position: relative;
+  padding: 10px 15px; /* Slightly smaller padding */
+  border-radius: 18px; /* Slightly more rounded */
+  max-width: 75%; /* Allow slightly wider bubbles */
+  margin-bottom: 8px; /* Tighter spacing */
+  word-wrap: break-word;
+  color: white; /* Text color for bubbles */
+  line-height: 1.4; /* Improve readability */
+}
+
+.chat-bubble.user {
+  background-color: #585858; /* User bubble color (e.g., dark grey) */
+  align-self: flex-end;
+  text-align: right; /* Keep text aligned right */
+  margin-left: auto; /* Push to right */
+}
+
+/* Optional: Tail for user bubble */
+/* .chat-bubble.user::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  border-width: 15px 0px 0px 15px;
+  border-style: solid;
+  border-color: transparent transparent transparent #585858;
+} */
+
+.chat-bubble.ai {
+  background-color: #e20074; /* AI bubble color (magenta) */
+  align-self: flex-start;
+  text-align: left; /* Keep text aligned left */
+  margin-right: auto; /* Push to left */
+}
+
+/* Optional: Tail for AI bubble */
+/* .chat-bubble.ai::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -10px;
+  border-width: 15px 15px 0px 0;
+  border-style: solid;
+  border-color: transparent #e20074 transparent transparent;
+} */
+
+/* Style for System messages */
+.system-message {
+    text-align: center;
+    font-size: 0.75rem; /* Smaller text */
+    color: #a0a0a0; /* Grey color */
+    font-style: italic;
+    margin: 8px 0;
+}
+
+/* Ensure scrollbars are styled reasonably if they appear */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(226, 0, 126, 0.5); /* Semi-transparent magenta */
+  border-radius: 3px;
+}
