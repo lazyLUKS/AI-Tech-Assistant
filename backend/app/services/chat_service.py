@@ -1,9 +1,8 @@
 import logging
 import asyncio
 
-# Correct relative imports
-from ..core import llm, session_manager
-from . import file_service # Imports file_service from the same package ('services')
+# Corrected: Use absolute imports from the 'app' package root
+from app.core import llm, session_manager
 
 logger = logging.getLogger(__name__)
 

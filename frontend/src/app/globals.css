@@ -102,3 +102,35 @@ body {
   background-color: rgba(226, 0, 126, 0.5); /* Semi-transparent magenta */
   border-radius: 3px;
 }
+
+@keyframes simplePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.animate-simple-pulse {
+  animation: simplePulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Ensure chat bubble content aligns items reasonably */
+.chat-bubble {
+  /* ... other styles ... */
+  display: flex; /* Helps align content like text and dots */
+  align-items: center; /* Vertically center if needed */
+}
+
+.chat-bubble.ai {
+   /* ... other styles ... */
+   justify-content: flex-start; /* Align content (like dots) to the start */
+}
+
+.chat-bubble.user {
+   /* ... other styles ... */
+   justify-content: flex-end; /* Align content to the end */
+}
+
+/* Explicit styling for the AnimatedDots span */
+.animated-dots-container > span {
+    display: inline-block; /* Ensure spans take space */
+    min-width: 1em; /* Give some minimum width */
+}

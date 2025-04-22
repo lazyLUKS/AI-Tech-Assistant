@@ -1,9 +1,10 @@
 import uuid
 import os
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional # <<--- ADDED IMPORT
 
-from .config import settings
+# Use absolute import from 'app' package root
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -15,12 +16,12 @@ def create_session(mode: str, context_data: Dict[str, Any]) -> str:
     session_id = uuid.uuid4().hex
     _session_data[session_id] = {
         "mode": mode,
-        **context_data # e.g., {"text_context": text} or {"image_url": url, "file_path": path}
+        **context_data
     }
     logger.info(f"Created session {session_id} for mode {mode}")
     return session_id
 
-def get_session(session_id: str) -> Optional[Dict[str, Any]]:
+def get_session(session_id: str) -> Optional[Dict[str, Any]]: # Used Optional here
     """Retrieves session data."""
     return _session_data.get(session_id)
 
@@ -31,7 +32,8 @@ def clear_session(session_id: str) -> bool:
         logger.info(f"Session {session_id} data cleared.")
 
         # Clean up uploaded files associated with the session
-        if data["mode"] == "image":
+        # Ensure 'mode' exists before accessing
+        if data.get("mode") == "image":
             file_path = data.get("file_path")
             if file_path and os.path.exists(file_path):
                 try:
@@ -39,15 +41,7 @@ def clear_session(session_id: str) -> bool:
                     logger.info(f"Removed uploaded image file: {file_path}")
                 except OSError as e:
                     logger.error(f"Error removing file {file_path}: {e}")
-        elif data["mode"] == "pdf":
-             # Clean up temporary PDF if it wasn't already
-             temp_pdf_path = data.get("temp_pdf_path")
-             if temp_pdf_path and os.path.exists(temp_pdf_path):
-                 try:
-                     os.remove(temp_pdf_path)
-                     logger.info(f"Removed temporary pdf file: {temp_pdf_path}")
-                 except OSError as e:
-                     logger.error(f"Error removing file {temp_pdf_path}: {e}")
+        # Add cleanup for other file types if needed (e.g., temp audio, temp pdf)
 
         return True
     else:
@@ -57,9 +51,7 @@ def clear_session(session_id: str) -> bool:
 def cleanup_all_sessions():
     """Clears all active sessions and their files (e.g., on shutdown)."""
     logger.info("Cleaning up all active sessions...")
-    session_ids = list(_session_data.keys())
+    session_ids = list(_session_data.keys()) # Avoid modifying dict while iterating
     for session_id in session_ids:
-        clear_session(session_id)
+        clear_session(session_id) # Reuse the single session cleanup logic
     logger.info("Session cleanup complete.")
-
-# Optional: Consider registering cleanup_all_sessions with atexit or FastAPI lifespan

@@ -4,9 +4,9 @@ import uuid
 from pathlib import Path
 from fastapi import UploadFile
 
-# Correct relative import from parent ('services') directory to 'core' and 'utils'
-from ..core.config import settings
-from ..utils import file_utils # Correctly imports from the utils sibling directory
+# Corrected: Use absolute imports from the 'app' package root
+from app.core.config import settings
+from app.utils import file_utils
 
 logger = logging.getLogger(__name__)
 

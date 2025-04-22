@@ -3,12 +3,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from pathlib import Path # Import Path
+from pathlib import Path
 
-# Correct relative imports from 'main.py' level
+# Correct relative imports from 'main.py' level (already correct)
 from .api.router import api_router
 from .core.config import settings
-from .core import llm, session_manager, tts_manager # Import core modules
+from .core import llm, session_manager, tts_manager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

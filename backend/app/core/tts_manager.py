@@ -1,13 +1,11 @@
 import uuid
 import logging
-from typing import Dict, Optional, Literal
+from typing import Dict, Optional, Any, Literal # <<--- ADDED IMPORTS
 
 logger = logging.getLogger(__name__)
 
-# --- Global TTS Task Storage ---
-# Replace with DB/Redis/Celery for production
-_tts_tasks: Dict[str, Dict] = {}
-# --- ---
+# In-memory store for TTS tasks
+_tts_tasks: Dict[str, Dict[str, Any]] = {} # More specific type hint
 
 TTS_Task_Status = Literal["processing", "done", "failed"]
 
@@ -18,23 +16,35 @@ def create_tts_task() -> str:
     logger.info(f"Created TTS task {task_id}")
     return task_id
 
-def update_tts_task_status(task_id: str, status: TTS_Task_Status, audio_url: Optional[str] = None, error: Optional[str] = None):
+def update_tts_task_status(
+    task_id: str,
+    status: TTS_Task_Status, # Use Literal type hint
+    audio_url: Optional[str] = None,
+    error: Optional[str] = None
+):
     """Updates the status and result of a TTS task."""
     if task_id in _tts_tasks:
         _tts_tasks[task_id]["status"] = status
-        if audio_url:
-            _tts_tasks[task_id]["audio_url"] = audio_url
-        if error:
-             _tts_tasks[task_id]["error"] = error
+        _tts_tasks[task_id]["audio_url"] = audio_url
+        _tts_tasks[task_id]["error"] = error
         logger.info(f"Updated TTS task {task_id} status to {status}")
     else:
         logger.warning(f"Attempted to update non-existent TTS task: {task_id}")
 
-def get_tts_task(task_id: str) -> Optional[Dict]:
+def get_tts_task(task_id: str) -> Optional[Dict[str, Any]]: # Use Optional and specific Dict type
     """Retrieves the status and result of a TTS task."""
     return _tts_tasks.get(task_id)
 
 def cleanup_tts_tasks():
     """Optional: Clean up old/stuck tasks if needed."""
-    # Implement logic to remove tasks older than a certain time, etc.
-    logger.info("Cleaning up TTS tasks (implementation pending).")
+    # Example: Remove tasks older than 1 hour
+    # import time
+    # cutoff = time.time() - 3600
+    # tasks_to_remove = [tid for tid, task in _tts_tasks.items() if task.get('timestamp', 0) < cutoff]
+    # for tid in tasks_to_remove:
+    #     _tts_tasks.pop(tid, None)
+    #     logger.info(f"Cleaned up old TTS task {tid}")
+    # Clear all on shutdown for this example
+    logger.info("Cleaning up TTS tasks...")
+    _tts_tasks.clear()
+    logger.info("TTS task cleanup complete.")

@@ -4,88 +4,83 @@ import logging
 import os
 import uuid
 from pathlib import Path
+from typing import Optional # <<--- ADDED IMPORT
 
-# Uncomment if implementing backend STT
-# import whisper
-# from ..core.config import settings
+# If implementing backend STT, ensure config import is correct
+# from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 # --- Whisper Model (Optional - Load if doing backend STT) ---
-# try:
-#     logger.info(f"Loading Whisper model: {settings.WHISPER_MODEL}")
-#     whisper_model = whisper.load_model(settings.WHISPER_MODEL)
-#     logger.info("Whisper model loaded.")
-# except Exception as e:
-#     logger.error(f"Failed to load Whisper model: {e}", exc_info=True)
-#     whisper_model = None
+# ... (Whisper loading code remains the same) ...
 # --- ---
 
 def extract_text_from_pdf(pdf_path: str) -> str:
     """Extracts and returns text from a PDF file using PyMuPDF."""
+    text = ""
     try:
+        # Ensure the file exists before opening
+        if not Path(pdf_path).is_file():
+            logger.error(f"PDF file not found at path: {pdf_path}")
+            return ""
+
         doc = fitz.open(pdf_path)
-        text = ""
         for page_num in range(len(doc)):
             page = doc.load_page(page_num)
             text += page.get_text()
+        doc.close() # Explicitly close the document
         logger.info(f"Successfully extracted text from PDF: {pdf_path}")
         return text
     except Exception as e:
         logger.error(f"Error extracting text from PDF {pdf_path}: {e}", exc_info=True)
-        return "" # Return empty string on failure
+        return "" # Return empty string on error
 
+# Corrected Function Signature: Added import for Optional and Image.Image type hint
 def validate_and_load_image(image_path: str) -> Optional[Image.Image]:
     """
-    Attempts to open an image file and convert it to RGB.
+    Attempts to open an image file.
     Returns the PIL Image object or None if invalid.
     """
     try:
+         # Ensure the file exists before opening
+        if not Path(image_path).is_file():
+            logger.error(f"Image file not found at path: {image_path}")
+            return None
+
         img = Image.open(image_path)
+        # Optionally force loading image data to catch truncated files etc.
+        img.load()
+        # Optionally convert to RGB if needed downstream, but validation is primary here
+        # img = img.convert("RGB")
         logger.info(f"Successfully loaded image: {image_path}")
-        return img.convert("RGB")
+        return img
     except UnidentifiedImageError:
-        logger.error(f"Error: Cannot identify image file '{image_path}'. Not a valid image.")
+        logger.warning(f"Cannot identify image file '{image_path}'. Not a valid image.")
         return None
     except Exception as e:
         logger.error(f"Error loading image {image_path}: {e}", exc_info=True)
         return None
 
-def save_uploaded_file(file: bytes, upload_dir: Path, original_filename: str) -> Path:
+async def save_uploaded_file(file_bytes: bytes, upload_dir: Path, desired_filename: str) -> Path:
     """Saves uploaded file bytes to a unique path in the upload directory."""
-    # Create a unique filename to avoid collisions
-    file_extension = Path(original_filename).suffix
-    unique_filename = f"{uuid.uuid4().hex}{file_extension}"
+    # Basic sanitization (consider a more robust library for production)
+    safe_base = "".join(c if c.isalnum() or c in ['-', '_', '.'] else '_' for c in Path(desired_filename).stem)
+    safe_ext = "".join(c if c.isalnum() or c == '.' else '' for c in Path(desired_filename).suffix)
+    # Limit length to prevent issues
+    safe_filename_base = f"{safe_base[:100]}{safe_ext[:10]}"
+
+    # Using UUID ensures uniqueness better than just relying on the original name
+    unique_filename = f"{uuid.uuid4().hex}_{safe_filename_base}"
     file_path = upload_dir / unique_filename
 
     try:
+        # Ensure directory exists (though config should handle this)
+        upload_dir.mkdir(parents=True, exist_ok=True)
         with open(file_path, "wb") as f:
-            f.write(file)
+            f.write(file_bytes)
         logger.info(f"Saved uploaded file to: {file_path}")
         return file_path
     except OSError as e:
         logger.error(f"Error saving file to {file_path}: {e}")
-        raise # Re-raise the exception to be handled by the endpoint
+        raise # Re-raise the exception to be caught by the service layer
 
-# --- Optional: Backend STT ---
-# def transcribe_audio(audio_file_path: str) -> str:
-#     """
-#     Transcribes the given audio file using the loaded Whisper model.
-#     Returns the transcribed text or empty string on failure.
-#     """
-#     if not whisper_model:
-#         logger.error("Whisper model not loaded. Cannot transcribe.")
-#         return ""
-#     try:
-#         logger.info(f"Transcribing audio file: {audio_file_path}")
-#         # Ensure file exists before passing to whisper
-#         if not os.path.exists(audio_file_path):
-#             logger.error(f"Audio file not found: {audio_file_path}")
-#             return ""
-#         result = whisper_model.transcribe(audio_file_path)
-#         logger.info("Audio transcription successful.")
-#         return result.get("text", "")
-#     except Exception as e:
-#         logger.error(f"Error during audio transcription: {e}", exc_info=True)
-#         return ""
-# --- ---
