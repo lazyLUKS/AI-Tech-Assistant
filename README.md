@@ -127,7 +127,7 @@ Before you begin, ensure you have the following installed on your machine:
         ```
         NEXT_PUBLIC_API_URL=http://<BACKEND_HOST_IP>:<BACKEND_PORT>/api/v1
         ```
-        (e.g., `NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1`).
+        (e.g., `NEXT_PUBLIC_API_URL=http://localhost:8000`).
 4.  **Run the frontend dev server:** `npm run dev` 
     * The frontend will be available at `http://localhost:3000`.
 
