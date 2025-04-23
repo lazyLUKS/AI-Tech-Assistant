@@ -125,7 +125,7 @@ Before you begin, ensure you have the following installed on your machine:
     * Create `.env.development`.
     * Add the backend API URL, pointing to the running backend:
         ```
-        NEXT_PUBLIC_API_URL=http://<BACKEND_HOST_IP>:<BACKEND_PORT>/api/v1
+        NEXT_PUBLIC_API_URL=http://<BACKEND_HOST_IP>:<BACKEND_PORT>
         ```
         (e.g., `NEXT_PUBLIC_API_URL=http://localhost:8000`).
 4.  **Run the frontend dev server:** `npm run dev` 
