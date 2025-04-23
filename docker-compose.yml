@@ -1,0 +1,57 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    # --- Volumes Section ---
+    # Ensure 'volumes:' is followed by list items (-) if uncommented
+    volumes:
+      # Optional: Mount static files directory. Uncomment *with* the leading '-'
+      - ./backend/app/static:/app/app/static
+
+      # Optional: Mount huggingface cache. Uncomment *with* the leading '-'
+      - ~/.cache/huggingface:/root/.cache/huggingface
+
+      # Optional: Use a named volume for vLLM cache. Uncomment *with* the leading '-'
+      # Define 'vllm_cache' in the top-level 'volumes:' section below if used.
+      # - vllm_cache:/root/.cache/vllm
+    # --- End Volumes Section ---
+    env_file:
+      - ./backend/.env
+    environment:
+      - HOST_IP=0.0.0.0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # Optional healthcheck
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    #   start_period: 60s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_started # Or service_healthy if healthcheck uncommented
+
+# Optional: Define named volumes if used in the service above
+# volumes:
+#   vllm_cache:
