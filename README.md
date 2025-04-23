@@ -2,37 +2,41 @@
 
 This project implements a web-based AI assistant that can answer questions based on text, uploaded PDF documents, or uploaded images. It uses the Pixtral-12B model via vLLM for multimodal understanding and generation, FastAPI for the backend API, and Next.js for the frontend chat interface.
 
+**TTS function currently disabled**
+TTS libary is depracated and was excluded in requirements.txt but can be manually donwloaded for testing/debungging.
+
+
 **Features:**
 
 * **Multimodal Chat:** Engage in text-based chat or ask questions about uploaded PDFs and images.
-* **PDF Text Extraction:** Extracts text content from PDF files for context[cite: 1].
-* **Image Understanding:** Analyzes uploaded images to answer related questions[cite: 1].
-* **Text-to-Speech (TTS):** Optional voice output for AI responses using the `TTS` library[cite: 1].
-* **Speech-to-Text (STT):** Optional voice input using the browser's Speech Recognition API[cite: 1]. Backend transcription via Whisper is possible but currently optional/commented out.
-* **Real-time Interaction:** FastAPI backend with a responsive Next.js frontend[cite: 1].
-* **Session Management:** Maintains context (uploaded file) within a session[cite: 1].
+* **PDF Text Extraction:** Extracts text content from PDF files for context.
+* **Image Understanding:** Analyzes uploaded images to answer related questions.
+* **Text-to-Speech (TTS):** Optional voice output for AI responses using the `TTS` library.
+* **Speech-to-Text (STT):** Optional voice input using the browser's Speech Recognition API. Backend transcription via Whisper is possible but currently optional/commented out.
+* **Real-time Interaction:** FastAPI backend with a responsive Next.js frontend.
+* **Session Management:** Maintains context (uploaded file) within a session.
 
 ## Architecture
 
-The project is divided into two main parts[cite: 1]:
+The project is divided into two main parts:
 
 1.  **Backend (FastAPI):**
-    * Located in the `backend/` directory[cite: 1].
-    * Serves the API endpoints for chat, file uploads, and TTS[cite: 1].
-    * Handles interaction with the Pixtral model (via vLLM)[cite: 1].
-    * Performs PDF text extraction, image loading, and TTS synthesis[cite: 1].
-    * Manages temporary session data and TTS task status in memory[cite: 1].
-    * Serves static files (uploaded images, generated audio)[cite: 1].
+    * Located in the `backend/` directory.
+    * Serves the API endpoints for chat, file uploads, and TTS.
+    * Handles interaction with the Pixtral model (via vLLM).
+    * Performs PDF text extraction, image loading, and TTS synthesis.
+    * Manages temporary session data and TTS task status in memory.
+    * Serves static files (uploaded images, generated audio).
 2.  **Frontend (Next.js):**
-    * Located in the `frontend/` directory[cite: 1].
-    * Provides the user interface (chatbox)[cite: 1].
-    * Handles user input (text, voice), file selection, and API calls to the backend[cite: 1].
-    * Displays chat history and loading indicators[cite: 1].
-    * Plays back TTS audio[cite: 1].
+    * Located in the `frontend/` directory.
+    * Provides the user interface (chatbox).
+    * Handles user input (text, voice), file selection, and API calls to the backend.
+    * Displays chat history and loading indicators.
+    * Plays back TTS audio.
 
 ## Setup Options
 
-You can set up the project either manually (running backend and frontend separately) or using Docker (recommended for easier dependency management and consistency).
+You can set up the project either manually or using Docker (recommended for easier dependency management and consistency).
 
 
 ### Option 1: Docker Setup (Recommended)
@@ -89,43 +93,47 @@ Before you begin, ensure you have the following installed on your machine:
 
 ### Option 2: Manual Setup (Backend + Frontend Separately)
 
-#### Prerequisites [cite: 1]
+#### Prerequisites 
 
 * Python 3.9+
 * Node.js 18+ and npm (or yarn/pnpm)
 * NVIDIA GPU with appropriate CUDA drivers installed (compatible with vLLM and PyTorch) for the machine running the backend.
 * Access to the Pixtral-12B model weights (or another vLLM-compatible model).
 
-#### Backend Setup [cite: 1]
+#### Backend Setup 
 
-1.  **Navigate to the backend directory:** `cd backend` [cite: 1]
+1.  **Navigate to the backend directory:** `cd backend` 
 2.  **Create and activate a virtual environment:**
     ```bash
     python -m venv venv
     source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
-    [cite: 1]
-3.  **Install Python dependencies:** `pip install -r requirements.txt` [cite: 1]
+    
+3.  **Install Python dependencies:** `pip install -r requirements.txt` 
     *(Ensure your environment meets `vllm` GPU/CUDA prerequisites)*
 4.  **Configure Environment Variables (`backend/.env`):**
-    * Copy `.env.example` to `.env` if it exists, or create `.env`[cite: 1].
-    * Edit `.env` and set values like `MODEL_NAME`, `TTS_MODEL`, `MAX_TOKENS`, `ENABLE_GPU_TTS`, etc. Set `HOST_IP` to `127.0.0.1` or your machine's IP if accessing from other devices on your network[cite: 1]. `PORT` defaults to 8000[cite: 1].
-5.  **Run the backend server:** `python run.py` [cite: 1]
-    * The API will be available at `http://<HOST_IP>:<PORT>`[cite: 1].
+    * Copy `.env.example` to `.env` if it exists, or create `.env`.
+    * Edit `.env` and set values like `MODEL_NAME`, `TTS_MODEL`, `MAX_TOKENS`, `ENABLE_GPU_TTS`, etc. Set `HOST_IP` to `127.0.0.1` or your machine's IP if accessing from other devices on your network. `PORT` defaults to 8000.
+5.  **Run the backend server:** `python run.py` 
+    * The API will be available at `http://<HOST_IP>:<PORT>`.
 
-#### Frontend Setup [cite: 1]
+#### Frontend Setup 
 
-1.  **Navigate to the frontend directory:** `cd frontend` [cite: 1]
-2.  **Install Node.js dependencies:** `npm install` [cite: 1]
+1.  **Navigate to the frontend directory:** `cd frontend` 
+2.  **Install Node.js dependencies:** `npm install` 
 3.  **Configure Environment Variable (`frontend/.env.development`):**
-    * Create `.env.development`[cite: 1].
+    * Create `.env.development`.
     * Add the backend API URL, pointing to the running backend:
         ```
         NEXT_PUBLIC_API_URL=http://<BACKEND_HOST_IP>:<BACKEND_PORT>/api/v1
         ```
-        (e.g., `NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1`)[cite: 1].
-4.  **Run the frontend dev server:** `npm run dev` [cite: 1]
-    * The frontend will be available at `http://localhost:3000`[cite: 1].
+        (e.g., `NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1`).
+4.  **Run the frontend dev server:** `npm run dev` 
+    * The frontend will be available at `http://localhost:3000`.
 
 ---
+**My setup:** 
+Pixtral-12B running in float16:
+![Pixtral-12B running in float16](./image.png)
+
 

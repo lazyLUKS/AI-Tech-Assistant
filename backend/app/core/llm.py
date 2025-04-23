@@ -47,7 +47,7 @@ def generate_answer(question: str, text_context: str = "", image_url: str = None
         "content": [{
             "type": "text",
             "text": (
-                "You are Aische, a helpful AI assistant at the T-Systems Innovationcenter in Munich. "
+                "You are Sarah, a helpful AI assistant at the T-Systems Innovationcenter in Munich. "
                 "Answer concisely in one or two brief paragraphs. Keep your responses short, clear, and to the point."
             )
         }]
