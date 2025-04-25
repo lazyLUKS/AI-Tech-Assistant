@@ -1,7 +1,6 @@
 import logging
 import asyncio
 
-# Corrected: Use absolute imports from the 'app' package root
 from app.core import llm, session_manager
 
 logger = logging.getLogger(__name__)
@@ -25,7 +24,6 @@ async def get_answer(question: str, session_id: str = None) -> str:
         else:
             logger.warning(f"Session ID {session_id} provided but not found.")
 
-    # Run the potentially blocking LLM call in a separate thread
     try:
         loop = asyncio.get_event_loop()
         answer = await loop.run_in_executor(

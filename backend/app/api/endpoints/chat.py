@@ -1,4 +1,4 @@
-from __future__ import annotations # <<--- ADDED: Must be the first code line
+from __future__ import annotations 
 
 import logging
 from fastapi import (
@@ -7,7 +7,7 @@ from fastapi import (
 from fastapi.responses import JSONResponse
 from typing import Optional
 
-# Use absolute imports from the 'app' package root
+
 from app.core import session_manager, tts_manager
 from app.services import file_service, chat_service, tts_service
 from app.models import chat as chat_models
@@ -16,13 +16,10 @@ from app.models.error import ErrorResponse
 router = APIRouter()
 logger = logging.getLogger(__name__)
 
-# --- Endpoints (/upload, /ask, /forget) ---
-# The code for the endpoints remains the same as the previous version
-# where we used Form(...) instead of Depends(Model.as_form)
 
 @router.post(
     "/upload",
-    response_model=chat_models.UploadResponse, # This will be evaluated later now
+    response_model=chat_models.UploadResponse, 
     responses={
         400: {"model": ErrorResponse, "description": "Invalid input or file processing error"},
         500: {"model": ErrorResponse, "description": "Internal server error"}
@@ -64,7 +61,7 @@ async def upload_file(
 
 @router.post(
     "/ask",
-    response_model=chat_models.AskResponse, # This will be evaluated later now
+    response_model=chat_models.AskResponse, 
     responses={500: {"model": ErrorResponse}}
 )
 async def ask_question(
@@ -96,7 +93,7 @@ async def ask_question(
 
 @router.post(
     "/forget",
-    response_model=chat_models.ForgetResponse, # This will be evaluated later now
+    response_model=chat_models.ForgetResponse, 
     responses={404: {"model": ErrorResponse}}
 )
 async def forget_session(

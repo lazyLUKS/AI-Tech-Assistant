@@ -9,7 +9,6 @@ from .config import settings
 logger = logging.getLogger(__name__)
 
 # --- Global LLM Instance ---
-# We initialize it globally but could also use FastAPI lifespan events
 try:
     logger.info(f"Initializing vLLM with model: {settings.MODEL_NAME}")
     llm = LLM(
@@ -24,7 +23,6 @@ except Exception as e:
     logger.error(f"Failed to initialize vLLM: {e}", exc_info=True)
     llm = None
     sampling_params = None
-# --- ---
 
 def generate_answer(question: str, text_context: str = "", image_url: str = None) -> str:
     """
@@ -55,7 +53,6 @@ def generate_answer(question: str, text_context: str = "", image_url: str = None
 
     prompt = question
     if text_context:
-        # Add context clearly separated
         prompt += f"\n\n--- Context ---\n{text_context}\n--- End Context ---"
 
     user_message_content = [{"type": "text", "text": prompt}]

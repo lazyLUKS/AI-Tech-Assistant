@@ -7,7 +7,7 @@ from pathlib import Path
 try:
     from TTS.api import TTS
 except ImportError:
-    TTS = None # type: ignore
+    TTS = None 
 
 from ..core.config import settings
 from ..core import tts_manager
@@ -15,7 +15,6 @@ from ..core import tts_manager
 logger = logging.getLogger(__name__)
 
 # --- Global TTS Model Instance ---
-# Initialize based on config
 tts_model = None
 if TTS:
     try:
@@ -33,7 +32,7 @@ if TTS:
         tts_model = None
 else:
     logger.warning("TTS library not installed. TTS functionality disabled.")
-# --- ---
+
 
 def synthesize_text_background(text: str, task_id: str):
     """
@@ -54,7 +53,6 @@ def synthesize_text_background(text: str, task_id: str):
         logger.info(f"TTS synthesis complete for task {task_id}.")
 
         # Construct the absolute URL for the client to fetch
-        # Assumes static files served at /static/audio
         audio_url = f"http://{settings.HOST_IP}:{settings.PORT}/{settings.STATIC_DIR}/audio/{audio_filename}"
 
         tts_manager.update_tts_task_status(task_id, status="done", audio_url=audio_url)

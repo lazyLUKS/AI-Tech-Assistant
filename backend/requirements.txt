@@ -1,17 +1,17 @@
 # Core Framework
 fastapi>=0.110.0,<0.112.0
-uvicorn[standard]>=0.27.0,<0.30.0 # Includes websockets, httptools etc.
+uvicorn[standard]>=0.27.0,<0.30.0 
 pydantic>=2.5.0,<3.0.0
 pydantic-settings>=2.1.0,<3.0.0
 
 # LLM / AI
-vllm>=0.4.0,<0.8.0 # Check compatibility with your hardware/CUDA
-torch>=2.1.0,<2.6.0 # Match vLLM requirements
-# transformers>=4.36.0,<4.49.0 # Often needed by vLLM or for tokenizers
+vllm>=0.4.0,<0.8.0 
+torch>=2.1.0,<2.6.0 
+# transformers>=4.36.0,<4.49.0 
 
 # File Handling
-PyMuPDF>=1.23.0,<1.26.0 # For PDF extraction
-Pillow>=10.0.0,<12.0.0 # For image validation
+PyMuPDF>=1.23.0,<1.26.0 
+Pillow>=10.0.0,<12.0.0 
 
 # TTS (Optional - if using Coqui TTS)
 #TTS>=0.22.0,<0.23.0 # Coqui TTS library
@@ -20,10 +20,9 @@ Pillow>=10.0.0,<12.0.0 # For image validation
 # openai-whisper>=20231117
 
 # API Utilities
-python-multipart>=0.0.7,<0.0.21 # For form data (file uploads)
-# aiohttp-cors # Not strictly needed if using FastAPI's CORSMiddleware
+python-multipart>=0.0.7,<0.0.21 
+# aiohttp-cors 
 
 # Environment Loading
 python-dotenv>=1.0.0,<2.0.0
 
-# Add other direct dependencies if you have them (e.g., database drivers)

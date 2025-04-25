@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
-import '../globals.css'; // Use relative path for CSS import
+import '../globals.css'; 
 
-// Get API URL from environment variables
+
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 if (!apiUrl) {
   console.error("FATAL: NEXT_PUBLIC_API_URL environment variable is not set!");
-  // Consider throwing an error or displaying a message in the UI
 }
 
-// --- AnimatedDots component (Revised) ---
+// --- AnimatedDots component ---
 function AnimatedDots() {
   const [dots, setDots] = useState('.');
   useEffect(() => {
@@ -22,8 +21,8 @@ function AnimatedDots() {
   }, []);
   // Use a container span and apply animation to it
   return (
-    <span className="animated-dots-container inline-block animate-pulse animate-simple-pulse"> {/* Added container and fallback animation */}
-      <span className="text-xl">{dots}</span> {/* Adjusted size */}
+    <span className="animated-dots-container inline-block animate-pulse animate-simple-pulse"> 
+      <span className="text-xl">{dots}</span> 
       <span className="text-xl invisible">...</span> {/* Invisible placeholder for layout */}
     </span>
   );
@@ -31,7 +30,6 @@ function AnimatedDots() {
 
 
 const Chatbox = () => {
-  // State variables...
   const [uploadMode, setUploadMode] = useState(""); // 'pdf' or 'image' from backend response
   const [file, setFile] = useState(null); // Temporarily hold file on select
   const [sessionId, setSessionId] = useState("");
@@ -63,17 +61,16 @@ const Chatbox = () => {
       const recognition = new SpeechRecognition();
       recognition.continuous = false; // Stop after first speech segment
       recognition.lang = 'en-US';
-      recognition.interimResults = false; // Only final results
+      recognition.interimResults = false; 
       recognition.maxAlternatives = 1;
 
       recognition.onresult = (event) => {
         const transcript = event.results[event.results.length - 1][0].transcript;
-        setQuestion(prev => (prev + transcript).trim()); // Append transcript and trim
+        setQuestion(prev => (prev + transcript).trim()); 
       };
 
       recognition.onend = () => {
         setIsRecording(false);
-        // Optionally auto-send if needed
       };
 
       recognition.onerror = (event) => {
@@ -87,7 +84,6 @@ const Chatbox = () => {
       // Disable the recording button or show a message
     }
 
-    // Cleanup function to stop recognition if component unmounts while recording
     return () => {
       if (recognitionRef.current && isRecording) {
         recognitionRef.current.stop();
@@ -101,7 +97,7 @@ const Chatbox = () => {
       fileInputRef.current.value = ""; // Reset input value to allow re-uploading same file
       fileInputRef.current.click();
     }
-     setErrorMsg(""); // Clear previous errors
+     setErrorMsg(""); 
   };
 
   // handleFileChange
@@ -152,7 +148,7 @@ const Chatbox = () => {
       return;
     }
     setUploadLoading(true);
-    setErrorMsg(""); // Clear previous errors
+    setErrorMsg(""); 
     const formData = new FormData();
     formData.append('mode', modeToUpload);
     formData.append('file', fileToUpload);
@@ -165,23 +161,20 @@ const Chatbox = () => {
       const data = await res.json(); // Attempt to parse JSON regardless of status
 
       if (!res.ok) {
-        // Use detail from JSON if available, otherwise use status text
         throw new Error(data?.detail || `Upload failed: ${res.status} ${res.statusText}`);
       }
 
       if (data.session_id) {
         setSessionId(data.session_id);
         setUploadedFilename(data.filename);
-        setUploadMode(data.mode); // Use mode from response for consistency
+        setUploadMode(data.mode); 
         setChatLog(prev => [...prev, { sender: "System", text: `File uploaded: ${data.filename} (${data.mode} mode)` }]);
       } else {
-         // Should not happen if response is ok and follows schema, but handle defensively
          throw new Error(data?.error || "Upload succeeded but no session ID received.");
       }
     } catch (error) {
       console.error("Upload error:", error);
       setErrorMsg(`Upload Error: ${error.message}`);
-      // Reset state on error
       setSessionId("");
       setUploadedFilename("");
       setUploadMode("");
@@ -198,7 +191,7 @@ const Chatbox = () => {
       return;
     }
     let statusData = { status: "processing" };
-    const statusUrl = `${apiUrl}/api/v1/tts/audio_status/${taskId}`; // Use full API path
+    const statusUrl = `${apiUrl}/api/v1/tts/audio_status/${taskId}`; 
 
     console.log(`Polling TTS status at: ${statusUrl}`);
     setAudioLoading(true); // Indicate polling started
@@ -250,14 +243,13 @@ const Chatbox = () => {
     if (!question.trim() || !apiUrl) return;
 
     const currentQuestion = question;
-    setQuestion(""); // Clear input immediately
-    setErrorMsg(""); // Clear previous errors
+    setQuestion(""); 
+    setErrorMsg(""); 
 
-    // Add user message and AI placeholder
     setChatLog(prev => [
       ...prev,
       { sender: "You", text: currentQuestion },
-      { sender: "AI", placeholder: true } // Placeholder for AI response
+      { sender: "AI", placeholder: true } 
     ]);
     setLoading(true); // Start loading indicator for AI response
 
@@ -270,7 +262,6 @@ const Chatbox = () => {
 
 
     try {
-      // Use FormData for consistency with other endpoints, though JSON is also fine here if preferred
       const res = await fetch(`${apiUrl}/api/v1/chat/ask`, { // Use full API path
         method: 'POST',
         body: formData // Send as form data
@@ -284,12 +275,10 @@ const Chatbox = () => {
       // Update chat log replacing placeholder
       setChatLog(prev => {
         const newLog = [...prev];
-        // Find the *last* message that has a placeholder flag
         const placeholderIndex = newLog.map(m => m.placeholder).lastIndexOf(true);
         if (placeholderIndex !== -1) {
-          newLog[placeholderIndex] = { sender: "AI", text: data.answer }; // Replace placeholder
+          newLog[placeholderIndex] = { sender: "AI", text: data.answer }; 
         } else {
-          // Fallback if placeholder somehow disappeared (shouldn't happen often)
           newLog.push({ sender: "AI", text: data.answer });
         }
         return newLog;
@@ -300,7 +289,6 @@ const Chatbox = () => {
         pollAudioStatus(data.tts_task_id); // Start polling in background
       } else if (talkMode && !data.tts_task_id){
          console.warn("TTS requested, but no task ID received from backend.");
-         // Optionally add a system message about TTS not being available
          setChatLog(prev => [...prev, { sender: "System", text: "TTS is currently unavailable." }]);
       }
 
@@ -331,7 +319,6 @@ const Chatbox = () => {
      setErrorMsg(""); // Clear error
     if (isRecording) {
       recognitionRef.current.stop();
-      // onend in useEffect will set isRecording to false
     } else {
       setQuestion(""); // Clear text input before starting new recording
       setIsRecording(true);
@@ -348,8 +335,6 @@ const Chatbox = () => {
   // toggleTalkMode
   const toggleTalkMode = () => {
     setTalkMode(prev => !prev);
-    // If turning off talk mode, potentially stop any ongoing audio playback?
-    // This requires managing the Audio object instance if needed.
   };
 
   // handleForget
@@ -365,17 +350,16 @@ const Chatbox = () => {
 
 
     try {
-      const res = await fetch(`${apiUrl}/api/v1/chat/forget`, { // Use full API path
+      const res = await fetch(`${apiUrl}/api/v1/chat/forget`, { 
         method: 'POST',
         body: formData // Send as form data
       });
-      const data = await res.json(); // Try parse
+      const data = await res.json(); 
 
       if (!res.ok) {
         throw new Error(data?.detail || `Forget failed: ${res.status} ${res.statusText}`);
       }
 
-      // Add system message only if not suppressed
       if (!suppressAlert) {
           setChatLog(prev => [...prev, { sender: "System", text: data.message || "Session context cleared." }]);
       }
@@ -384,13 +368,10 @@ const Chatbox = () => {
       setSessionId("");
       setUploadedFilename("");
       setUploadMode("");
-      // Optional: Clear chat log completely?
-      // setChatLog([{ sender: "AI", text: "Session cleared. Ask me anything or upload a new file." }]);
 
     } catch (error) {
       console.error("Error forgetting session:", error);
        if (!suppressAlert) setErrorMsg(`Forget Error: ${error.message}`);
-       // Even on error, might want to clear local state if session is likely invalid
        setSessionId("");
        setUploadedFilename("");
        setUploadMode("");
@@ -433,23 +414,18 @@ const Chatbox = () => {
               : `chat-bubble ${msg.sender === "You" ? "user" : "ai"}`
             }
           >
-            {/* Render AnimatedDots directly if placeholder is true */}
             {msg.placeholder ? <AnimatedDots /> : <span className="block max-w-full">{msg.text}</span>} {/* Added max-w-full */}
           </div>
         ))}
-        {/* AI loading indicator is handled by the placeholder message */}
       </div>
 
-       {/* Error Display Area */}
        {errorMsg && (
          <div className="px-4 py-2 text-red-400 text-sm bg-red-900 bg-opacity-60 border-t border-red-700 shrink-0">
            {errorMsg}
          </div>
        )}
 
-      {/* Input Area */}
       <div className="px-4 pt-3 flex flex-col space-y-2 border-t border-[#3a3a3a] shrink-0">
-        {/* Input field and Mic Button */}
         <div className="flex items-center space-x-2">
            <input
              type="text"

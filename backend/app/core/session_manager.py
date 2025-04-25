@@ -1,14 +1,12 @@
 import uuid
 import os
 import logging
-from typing import Dict, Any, Optional # <<--- ADDED IMPORT
+from typing import Dict, Any, Optional 
 
-# Use absolute import from 'app' package root
 from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# In-memory session storage (replace with DB/Redis for production)
 _session_data: Dict[str, Dict[str, Any]] = {}
 
 def create_session(mode: str, context_data: Dict[str, Any]) -> str:
@@ -21,7 +19,7 @@ def create_session(mode: str, context_data: Dict[str, Any]) -> str:
     logger.info(f"Created session {session_id} for mode {mode}")
     return session_id
 
-def get_session(session_id: str) -> Optional[Dict[str, Any]]: # Used Optional here
+def get_session(session_id: str) -> Optional[Dict[str, Any]]: 
     """Retrieves session data."""
     return _session_data.get(session_id)
 
@@ -41,7 +39,6 @@ def clear_session(session_id: str) -> bool:
                     logger.info(f"Removed uploaded image file: {file_path}")
                 except OSError as e:
                     logger.error(f"Error removing file {file_path}: {e}")
-        # Add cleanup for other file types if needed (e.g., temp audio, temp pdf)
 
         return True
     else:

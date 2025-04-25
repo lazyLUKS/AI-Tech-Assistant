@@ -5,7 +5,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 
-# Correct relative imports from 'main.py' level (already correct)
 from .api.router import api_router
 from .core.config import settings
 from .core import llm, session_manager, tts_manager
@@ -18,11 +17,9 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("Application startup...")
-    # Models should be loaded in their respective modules now
     logger.info(f"Model Name: {settings.MODEL_NAME}")
     logger.info(f"TTS Model: {settings.TTS_MODEL}")
     logger.info(f"Host: {settings.HOST_IP}:{settings.PORT}")
-    # Ensure static directories exist (config does this now)
     logger.info(f"Upload dir: {settings.upload_path}")
     logger.info(f"Audio dir: {settings.audio_path}")
     logger.info("Application startup complete.")
@@ -43,7 +40,7 @@ app = FastAPI(
 )
 
 # CORS Middleware
-origins = ["*"] # Adjust for production
+origins = ["*"] 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -53,13 +50,12 @@ app.add_middleware(
 )
 
 # API Router
-app.include_router(api_router, prefix="/api/v1") # Using prefix
+app.include_router(api_router, prefix="/api/v1") 
 
 # Static Files
 # Define the path relative to this main.py file's location (inside 'app')
 static_directory_path = Path(__file__).parent / settings.STATIC_DIR
 try:
-    # Mount the static directory using the absolute path
     app.mount(f"/{settings.STATIC_DIR}", StaticFiles(directory=static_directory_path), name="static")
     logger.info(f"Mounted static directory '{static_directory_path}' at '/{settings.STATIC_DIR}'")
 except RuntimeError as e:
@@ -68,6 +64,6 @@ except RuntimeError as e:
 
 
 # Root Endpoint
-@app.get("/", tags=["Root"], include_in_schema=False) # Hide from OpenAPI docs
+@app.get("/", tags=["Root"], include_in_schema=False) 
 async def read_root():
     return {"message": "Welcome to the Local AI Chat Assistant API! Docs available at /docs"}

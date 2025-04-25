@@ -4,7 +4,6 @@ import uuid
 from pathlib import Path
 from fastapi import UploadFile
 
-# Corrected: Use absolute imports from the 'app' package root
 from app.core.config import settings
 from app.utils import file_utils
 
@@ -18,7 +17,6 @@ async def process_uploaded_pdf(file: UploadFile) -> str:
     """Saves PDF temporarily, extracts text, and cleans up."""
     temp_pdf_path = None
     try:
-        # Use helper from file_utils
         temp_pdf_path_str = f"temp_{uuid.uuid4().hex}.pdf" # Generate name first
         temp_pdf_path = await file_utils.save_uploaded_file(
             await file.read(),
@@ -30,7 +28,6 @@ async def process_uploaded_pdf(file: UploadFile) -> str:
         text_context = file_utils.extract_text_from_pdf(str(temp_pdf_path))
         if not text_context:
              logger.warning(f"No text extracted from PDF: {file.filename}")
-             # Consider raising FileProcessingError("Could not extract text from the PDF.")
 
         return text_context
     except Exception as e:
@@ -54,7 +51,7 @@ async def process_uploaded_image(file: UploadFile) -> tuple[str, str]:
         image_path = await file_utils.save_uploaded_file(
             await file.read(),
             settings.upload_path, # Destination directory from config
-            file.filename or f"{uuid.uuid4().hex}.png" # Use original name or generate one
+            file.filename or f"{uuid.uuid4().hex}.png" 
         )
 
         # Validate using helper
