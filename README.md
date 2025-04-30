@@ -5,6 +5,8 @@ This project implements a web-based AI assistant that can answer questions based
 **TTS function currently disabled**
 TTS libary is depracated and was excluded in requirements.txt but can be manually donwloaded for testing/debungging.
 
+![Example-Imageupload](assets/example.webm)
+
 
 **Features:**
 
@@ -71,7 +73,6 @@ Before you begin, ensure you have the following installed on your machine:
     ```bash
     docker compose up --build
     ```
-    * `--build`: Forces Docker to rebuild the images using the Dockerfiles (important after code changes).
     * Add `-d` to run in detached mode (background): `docker compose up --build -d`
 3.  **First Run:** The first time you run this, Docker will:
     * Build the backend and frontend images (this can take time, especially downloading dependencies and base images).
@@ -134,6 +135,7 @@ Before you begin, ensure you have the following installed on your machine:
 ---
 **My setup:** 
 Pixtral-12B running in float16:
-![Pixtral-12B running in float16](./image.png)
+![Pixtral-12B running in float16](./assets/image.png)
+
 
 
