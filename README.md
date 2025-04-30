@@ -5,7 +5,7 @@ This project implements a web-based AI assistant that can answer questions based
 **TTS function currently disabled**
 TTS libary is depracated and was excluded in requirements.txt but can be manually donwloaded for testing/debungging.
 
-![Example-Imageupload](assets/example.webm)
+![Example-Imageupload](./assets/Image_upload_example.webm)
 
 
 **Features:**
