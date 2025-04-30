@@ -3,28 +3,29 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import '../globals.css'; 
+import '../globals.css'; // Ensure relative path
 
 const ParticlesBackground = () => {
   const [initDone, setInitDone] = useState(false);
 
   useEffect(() => {
-    console.log("Attempting to initialize particles engine..."); 
+    console.log("Attempting to initialize particles engine..."); // Add log
     initParticlesEngine(async (engine) => {
       await loadSlim(engine);
     }).then(() => {
-      console.log("Particles engine initialized successfully."); 
+      console.log("Particles engine initialized successfully."); // Add log
       setInitDone(true);
     }).catch(err => {
-      console.error("Failed to initialize particles engine:", err); 
+      console.error("Failed to initialize particles engine:", err); // Add error log
     });
-  }, []); 
+  }, []); // Run only once on mount
 
+  // Using the original options variable name and values
   const options = useMemo(() => ({
-    fullScreen: { enable: false }, 
+    fullScreen: { enable: false }, // <-- Key Change: Back to false
     background: {
       color: {
-        value: "transparent" 
+        value: "transparent" // Keep transparent
       }
     },
     fpsLimit: 120,
@@ -68,18 +69,19 @@ const ParticlesBackground = () => {
         }
     },
     detectRetina: true
-  }), []); 
+  }), []); // Calculate options once
 
   if (!initDone) {
-    return null; 
+    // Log removed here, useEffect logs are more useful now
+    return null; // Don't render until engine is initialized
   }
 
-  
+  // Use the original wrapper div structure
   return (
-    <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none"> 
+    <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none"> {/* <-- Key Change: Using the wrapper div */}
         <Particles
           id="tsparticles"
-          options={options} 
+          options={options} // Use the original options object name
         />
     </div>
   );

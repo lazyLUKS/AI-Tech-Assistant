@@ -4,7 +4,7 @@ import logging
 import os
 import uuid
 from pathlib import Path
-from typing import Optional 
+from typing import Optional # <<--- ADDED IMPORT
 
 # If implementing backend STT, ensure config import is correct
 # from app.core.config import settings
@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 # --- Whisper Model (Optional - Load if doing backend STT) ---
 # ... (Whisper loading code remains the same) ...
+# --- ---
 
 def extract_text_from_pdf(pdf_path: str) -> str:
     """Extracts and returns text from a PDF file using PyMuPDF."""
@@ -34,6 +35,7 @@ def extract_text_from_pdf(pdf_path: str) -> str:
         logger.error(f"Error extracting text from PDF {pdf_path}: {e}", exc_info=True)
         return "" # Return empty string on error
 
+# Corrected Function Signature: Added import for Optional and Image.Image type hint
 def validate_and_load_image(image_path: str) -> Optional[Image.Image]:
     """
     Attempts to open an image file.
@@ -46,7 +48,9 @@ def validate_and_load_image(image_path: str) -> Optional[Image.Image]:
             return None
 
         img = Image.open(image_path)
+        # Optionally force loading image data to catch truncated files etc.
         img.load()
+        # Optionally convert to RGB if needed downstream, but validation is primary here
         # img = img.convert("RGB")
         logger.info(f"Successfully loaded image: {image_path}")
         return img
@@ -59,15 +63,18 @@ def validate_and_load_image(image_path: str) -> Optional[Image.Image]:
 
 async def save_uploaded_file(file_bytes: bytes, upload_dir: Path, desired_filename: str) -> Path:
     """Saves uploaded file bytes to a unique path in the upload directory."""
+    # Basic sanitization (consider a more robust library for production)
     safe_base = "".join(c if c.isalnum() or c in ['-', '_', '.'] else '_' for c in Path(desired_filename).stem)
     safe_ext = "".join(c if c.isalnum() or c == '.' else '' for c in Path(desired_filename).suffix)
     # Limit length to prevent issues
     safe_filename_base = f"{safe_base[:100]}{safe_ext[:10]}"
 
+    # Using UUID ensures uniqueness better than just relying on the original name
     unique_filename = f"{uuid.uuid4().hex}_{safe_filename_base}"
     file_path = upload_dir / unique_filename
 
     try:
+        # Ensure directory exists (though config should handle this)
         upload_dir.mkdir(parents=True, exist_ok=True)
         with open(file_path, "wb") as f:
             f.write(file_bytes)
@@ -75,5 +82,5 @@ async def save_uploaded_file(file_bytes: bytes, upload_dir: Path, desired_filena
         return file_path
     except OSError as e:
         logger.error(f"Error saving file to {file_path}: {e}")
-        raise 
+        raise # Re-raise the exception to be caught by the service layer
 

@@ -2,6 +2,8 @@ import os
 from pydantic_settings import BaseSettings
 from pathlib import Path
 
+# Determine the base directory of the backend project
+# This assumes config.py is in backend/app/core
 BACKEND_ROOT = Path(__file__).resolve().parent.parent.parent
 
 class Settings(BaseSettings):

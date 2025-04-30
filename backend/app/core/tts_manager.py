@@ -1,11 +1,11 @@
 import uuid
 import logging
-from typing import Dict, Optional, Any, Literal 
+from typing import Dict, Optional, Any, Literal # <<--- ADDED IMPORTS
 
 logger = logging.getLogger(__name__)
 
 # In-memory store for TTS tasks
-_tts_tasks: Dict[str, Dict[str, Any]] = {} 
+_tts_tasks: Dict[str, Dict[str, Any]] = {} # More specific type hint
 
 TTS_Task_Status = Literal["processing", "done", "failed"]
 
@@ -18,7 +18,7 @@ def create_tts_task() -> str:
 
 def update_tts_task_status(
     task_id: str,
-    status: TTS_Task_Status, 
+    status: TTS_Task_Status, # Use Literal type hint
     audio_url: Optional[str] = None,
     error: Optional[str] = None
 ):
@@ -31,7 +31,7 @@ def update_tts_task_status(
     else:
         logger.warning(f"Attempted to update non-existent TTS task: {task_id}")
 
-def get_tts_task(task_id: str) -> Optional[Dict[str, Any]]: 
+def get_tts_task(task_id: str) -> Optional[Dict[str, Any]]: # Use Optional and specific Dict type
     """Retrieves the status and result of a TTS task."""
     return _tts_tasks.get(task_id)
 
