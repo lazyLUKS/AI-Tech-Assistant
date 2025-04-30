@@ -3,9 +3,9 @@
 This project implements a web-based AI assistant that can answer questions based on text, uploaded PDF documents, or uploaded images. It uses the Pixtral-12B model via vLLM for multimodal understanding and generation, FastAPI for the backend API, and Next.js for the frontend chat interface.
 
 **TTS function currently disabled**
-TTS libary is depracated and was excluded in requirements.txt but can be manually donwloaded for testing/debungging.
+TTS libary is depracated and was excluded in requirements.txt but can be manually downloaded for testing/debungging.
 
-[![Example-Imageupload](assets/thumbnail.png)](https://media.githubusercontent.com/media/lazyLUKS/T-Systems-KI-Chatbot/refs/heads/main/assets/Image_upload_example.webm)
+![Example-Imageupload](assets/imageupload.gif)
 
 
 **Features:**
